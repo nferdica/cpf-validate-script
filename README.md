@@ -13,7 +13,7 @@ Both implementations perform the following steps to validate a CPF:
 
 ## Class-Based Implementation
 
-This implementation uses ES6 classes to create a Validator class. Here’s how it works:
+This implementation uses ES6 classes to create a `Validator` class. Here’s how it works:
 
 ```
 // Creating the main class
@@ -75,7 +75,7 @@ if(cpf.valida()) {
 ```
 ## Constructor Function-Based Implementation
 
-This implementation uses the older constructor function approach to create a Validator function. Here’s how it works:
+This implementation uses the older constructor function approach to create a `Validator` function. Here’s how it works:
 
 ```
 // Main constructor function
@@ -139,3 +139,9 @@ if(cpf.valida()) {
 * **CPF Cleaning:** CPF should be provided in the format 'XXX.XXX.XXX-XX' or as a continuous string of numbers.
 * **Repetitive Sequences:** CPFs like '111.111.111-11' are considered invalid regardless of the calculations.
 * **Verifier Digit Calculation:** The calculations follow the standard algorithm used by the Federal Revenue.
+
+## License
+
+This script is provided "as is", without any warranties of any kind. Use it at your own risk.
+
+Feel free to adjust or add any additional information as needed!
