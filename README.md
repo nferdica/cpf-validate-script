@@ -1,28 +1,141 @@
 # **CPF Validator**
 
-This is a JavaScript script for validating Brazilian CPF (Cadastro de Pessoas Físicas) numbers. The CPF is a document used in Brazil to identify individuals, and its validation is important to ensure the provided number is valid and follows the rules established by the Federal Revenue.
+This repository contains two JavaScript implementations for validating Brazilian CPF (Cadastro de Pessoas Físicas) numbers. The CPF is used to identify individuals in Brazil, and validating it ensures that the number is correct according to established rules.
 
 ## Functionality
 
-The script performs the following steps to validate a CPF:
+Both implementations perform the following steps to validate a CPF:
 
-1. **CPF Cleaning:** Removes all non-numeric characters from the CPF.
-2. **Sequence Check:** Verifies if the CPF is a repetitive sequence of numbers (e.g., 111.111.111-11), which are considered invalid.
-3. **Verifier Digit** Calculation: Calculates the two final verifier digits of the CPF using standard algorithms and compares them with the provided digits.
-4. **Final Validation:** Returns whether the CPF is valid or invalid based on the calculations.
+1. **CPF Cleaning:** Remove all non-numeric characters from the CPF.
+2. **Sequence Check:** Verify if the CPF is a repetitive sequence of numbers (e.g., 111.111.111-11), which are considered invalid
+3. **Verifier Digit** Calculate the two verifier digits of the CPF using the standard algorithms and compare them with the provided digits.
+4. **Final Validation:** Return whether the CPF is valid or invalid based on the calculations.
 
-## Usage
+## Class-Based Implementation
 
-To use the script, follow the example below. The script includes a main function `Validator` that should be instantiated with the CPF number to be validated. After the instance is created, call the `valida` method to check if the CPF is valid.
+This implementation uses ES6 classes to create a Validator class. Here’s how it works:
 
-## Considerations
+```
+// Creating the main class
+class Validator {
+    constructor(cpf) {
+        Object.defineProperty(this, 'cpfLimpo', {
+            get: function() {
+                return cpf.replace(/\D+/g, '')
+            }
+        })
+    }
 
-* **CPF Cleaning:** The CPF should be provided in the format 'XXX.XXX.XXX-XX' or as a continuous string of numbers.
+    // Method for primary validation
+    valida() {
+        if(typeof this.cpfLimpo === 'undefined') return false;
+        if(this.cpfLimpo.length !== 11) return false;
+        if(this.isSequence()) return false;
+    
+        const cpfParcial = this.cpfLimpo.slice(0, -2)
+        const charOne = this.criaChar(cpfParcial);
+        const charTwo = this.criaChar(cpfParcial + charOne)
+    
+        const newCpf = cpfParcial + charOne + charTwo
+    
+        return newCpf === this.cpfLimpo
+    }
+
+    // Method to check for repetitive sequences
+    isSequence() {
+        const sequence = this.cpfLimpo[0].repeat(this.cpfLimpo.length);
+        return sequence === this.cpfLimpo;
+    }
+
+    // Method to calculate verifier digits
+    criaChar(cpfParcial) {
+        const cpfArray = Array.from(cpfParcial)
+        let regressAcum = cpfArray.length + 1
+    
+        const total = cpfArray.reduce((ac, val) => {
+            ac += (regressAcum * Number(val))
+            regressAcum--;
+            return ac;
+        }, 0)
+
+        const char = 11 - (total % 11)
+        return char > 9 ? '0' : String(char);
+    }
+}
+
+// Usage example
+const cpf = new Validator('705.484.450-52');
+
+if(cpf.valida()) {
+    console.log('Valid CPF!')
+} else {
+    console.log('Invalid CPF!')
+}
+
+```
+## Constructor Function-Based Implementation
+
+This implementation uses the older constructor function approach to create a Validator function. Here’s how it works:
+
+```
+// Main constructor function
+function Validator(cpf) {
+    Object.defineProperty(this, 'cpfLimpo', {
+        get: function () {
+            return cpf.replace(/\D+/g, '')
+        }
+    })
+}
+
+// Method for primary validation
+Validator.prototype.valida = function () {
+    if(typeof this.cpfLimpo === 'undefined') return false;
+    if(this.cpfLimpo.length !== 11) return false;
+    if(this.isSequence()) return false;
+    
+    const cpfParcial = this.cpfLimpo.slice(0, -2)
+    const charOne = this.criaChar(cpfParcial);
+    const charTwo = this.criaChar(cpfParcial + charOne)
+    
+    const newCpf = cpfParcial + charOne + charTwo
+    
+    return newCpf === this.cpfLimpo
+}
+
+// Method to check for repetitive sequences
+Validator.prototype.isSequence = function () {
+    const sequence = this.cpfLimpo[0].repeat(this.cpfLimpo.length);
+    return sequence === this.cpfLimpo;
+}
+
+// Method to calculate verifier digits
+Validator.prototype.criaChar = function(cpfParcial) {
+    const cpfArray = Array.from(cpfParcial)
+    let regressAcum = cpfArray.length + 1
+    
+    const total = cpfArray.reduce((ac, val) => {
+        ac += (regressAcum * Number(val))
+        regressAcum--;
+        return ac;
+    }, 0)
+
+    const char = 11 - (total % 11)
+    return char > 9 ? '0' : String(char);
+}
+
+// Usage example
+const cpf = new Validator('705.484.450-52');
+
+if(cpf.valida()) {
+    console.log('Valid CPF!')
+} else {
+    console.log('Invalid CPF!')
+}
+
+```
+
+## Notes
+
+* **CPF Cleaning:** CPF should be provided in the format 'XXX.XXX.XXX-XX' or as a continuous string of numbers.
 * **Repetitive Sequences:** CPFs like '111.111.111-11' are considered invalid regardless of the calculations.
-* **Verifier Digit Calculation:** The calculation is performed according to the standard algorithm used by the Federal Revenue.
-
-## License
-
-This script is provided "as is", without any warranties of any kind. Use it at your own risk.
-
-Let me know if you need any adjustments or additional information!
+* **Verifier Digit Calculation:** The calculations follow the standard algorithm used by the Federal Revenue.
