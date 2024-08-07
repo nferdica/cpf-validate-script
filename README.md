@@ -15,64 +15,6 @@ The script performs the following steps to validate a CPF:
 
 To use the script, follow the example below. The script includes a main function `Validator` that should be instantiated with the CPF number to be validated. After the instance is created, call the `valida` method to check if the CPF is valid.
 
-```
-// Main constructor function
-function Validator(cpf) {
-    Object.defineProperty(this, 'cpfLimpo', {
-        get: function () {
-            return cpf.replace(/\D+/g, '')
-        }
-    })
-}
-
-// Method of the Validator constructor function, where main validations are performed...
-Validator.prototype.valida = function () {
-    if(typeof this.cpfLimpo === 'undefined') return false;
-    if(this.cpfLimpo.length !== 11) return false;
-    if(this.isSequence()) return false;
-    
-    const cpfParcial = this.cpfLimpo.slice(0, -2)
-    const charOne = this.criaChar(cpfParcial);
-    const charTwo = this.criaChar(cpfParcial + charOne)
-    
-    const newCpf = cpfParcial + charOne + charTwo
-    
-    return newCpf === this.cpfLimpo
-}
-
-// Method of the Validator constructor function that prevents any numeric sequence from being entered, e.g., (111.111.111-11)
-Validator.prototype.isSequence = function () {
-    const sequence = this.cpfLimpo[0].repeat(this.cpfLimpo.length);
-    return sequence === this.cpfLimpo;
-}
-
-// Method of the Validator constructor function where the verifier digits are calculated.
-Validator.prototype.criaChar = function(cpfParcial) {
-    const cpfArray = Array.from(cpfParcial)
-    let regressAcum = cpfArray.length + 1
-    
-    const total = cpfArray.reduce((ac, val) => {
-        ac += (regressAcum * Number(val))
-        regressAcum--;
-        return ac;
-    }, 0)
-
-    const char = 11 - (total % 11)
-    return char > 9 ? '0' : String(char); // Ternary operation: if char is greater than 9, return 0; otherwise, return the char value
-}
-
-// CPF number to be inserted.
-const cpf = new Validator('705.484.450-52');
-
-// Output message!
-if(cpf.valida()) {
-    console.log('Valid CPF!')
-}else {
-    console.log('Invalid CPF!')
-}
-
-```
-
 ## Considerations
 
 * **CPF Cleaning:** The CPF should be provided in the format 'XXX.XXX.XXX-XX' or as a continuous string of numbers.
