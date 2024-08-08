@@ -1,147 +1,64 @@
-# **CPF Validator**
+# CPF Validator API 📃
 
-This repository contains two JavaScript implementations for validating Brazilian CPF (Cadastro de Pessoas Físicas) numbers. The CPF is used to identify individuals in Brazil, and validating it ensures that the number is correct according to established rules.
+Uma API simples desenvolvida em Node.js para validar CPFs brasileiros. Este projeto permite que outras aplicações consumam esta API para verificar se um CPF é válido ou não.
 
-## Functionality
+## Funcionalidades ✨
 
-Both implementations perform the following steps to validate a CPF:
+- Validação de CPFs via API.
+- Suporte a requisições POST com JSON.
+- Respostas em formato JSON indicando se o CPF é válido.
 
-1. **CPF Cleaning:** Remove all non-numeric characters from the CPF.
-2. **Sequence Check:** Verify if the CPF is a repetitive sequence of numbers (e.g., 111.111.111-11), which are considered invalid
-3. **Verifier Digit** Calculate the two verifier digits of the CPF using the standard algorithms and compare them with the provided digits.
-4. **Final Validation:** Return whether the CPF is valid or invalid based on the calculations.
+## Tecnologias Utilizadas ⚙️
 
-## Class-Based Implementation
+- Node.js
+- Express
 
-This implementation uses ES6 classes to create a `Validator` class. Here’s how it works:
+## Requisitos 🎓
 
-```
-// Creating the main class
-class Validator {
-    constructor(cpf) {
-        Object.defineProperty(this, 'cpfLimpo', {
-            get: function() {
-                return cpf.replace(/\D+/g, '')
-            }
-        })
-    }
+- Node.js (versão 14.x ou superior)
+- NPM (versão 6.x ou superior)
 
-    // Method for primary validation
-    valida() {
-        if(typeof this.cpfLimpo === 'undefined') return false;
-        if(this.cpfLimpo.length !== 11) return false;
-        if(this.isSequence()) return false;
-    
-        const cpfParcial = this.cpfLimpo.slice(0, -2)
-        const charOne = this.criaChar(cpfParcial);
-        const charTwo = this.criaChar(cpfParcial + charOne)
-    
-        const newCpf = cpfParcial + charOne + charTwo
-    
-        return newCpf === this.cpfLimpo
-    }
+## Instalação 💀
 
-    // Method to check for repetitive sequences
-    isSequence() {
-        const sequence = this.cpfLimpo[0].repeat(this.cpfLimpo.length);
-        return sequence === this.cpfLimpo;
-    }
+1. Clone o repositório para a sua máquina local:
 
-    // Method to calculate verifier digits
-    criaChar(cpfParcial) {
-        const cpfArray = Array.from(cpfParcial)
-        let regressAcum = cpfArray.length + 1
-    
-        const total = cpfArray.reduce((ac, val) => {
-            ac += (regressAcum * Number(val))
-            regressAcum--;
-            return ac;
-        }, 0)
+   ```bash
+   git clone https://github.com/noejunior792/cpf-validator-api.git
+   cd cpf-validator-api
+   npm install
+   npm start
+   ```
 
-        const char = 11 - (total % 11)
-        return char > 9 ? '0' : String(char);
-    }
-}
+## Como Usar 💻
 
-// Usage example
-const cpf = new Validator('705.484.450-52');
+### Endpoints
 
-if(cpf.valida()) {
-    console.log('Valid CPF!')
-} else {
-    console.log('Invalid CPF!')
-}
+#### POST /api/cpf/validate
 
-```
-## Constructor Function-Based Implementation
+Este endpoint valida um CPF e retorna se ele é válido ou não:
 
-This implementation uses the older constructor function approach to create a `Validator` function. Here’s how it works:
+- URL: /api/cpf/validate
+- Método: POST
+- Headers: Content-Type: application/json
+- Body: JSON contendo o CPF a ser validado.
 
-```
-// Main constructor function
-function Validator(cpf) {
-    Object.defineProperty(this, 'cpfLimpo', {
-        get: function () {
-            return cpf.replace(/\D+/g, '')
-        }
-    })
-}
+### Exemplo de requisição
 
-// Method for primary validation
-Validator.prototype.valida = function () {
-    if(typeof this.cpfLimpo === 'undefined') return false;
-    if(this.cpfLimpo.length !== 11) return false;
-    if(this.isSequence()) return false;
-    
-    const cpfParcial = this.cpfLimpo.slice(0, -2)
-    const charOne = this.criaChar(cpfParcial);
-    const charTwo = this.criaChar(cpfParcial + charOne)
-    
-    const newCpf = cpfParcial + charOne + charTwo
-    
-    return newCpf === this.cpfLimpo
-}
-
-// Method to check for repetitive sequences
-Validator.prototype.isSequence = function () {
-    const sequence = this.cpfLimpo[0].repeat(this.cpfLimpo.length);
-    return sequence === this.cpfLimpo;
-}
-
-// Method to calculate verifier digits
-Validator.prototype.criaChar = function(cpfParcial) {
-    const cpfArray = Array.from(cpfParcial)
-    let regressAcum = cpfArray.length + 1
-    
-    const total = cpfArray.reduce((ac, val) => {
-        ac += (regressAcum * Number(val))
-        regressAcum--;
-        return ac;
-    }, 0)
-
-    const char = 11 - (total % 11)
-    return char > 9 ? '0' : String(char);
-}
-
-// Usage example
-const cpf = new Validator('705.484.450-52');
-
-if(cpf.valida()) {
-    console.log('Valid CPF!')
-} else {
-    console.log('Invalid CPF!')
-}
+```bash
+curl -X POST http://localhost:3000/api/cpf/validate -H "Content-Type: application/json" -d '{"cpf": "12345678909"}'
 
 ```
 
-## Notes
+### Exemplo de resposta
 
-* **CPF Cleaning:** CPF should be provided in the format 'XXX.XXX.XXX-XX' or as a continuous string of numbers.
-* **Repetitive Sequences:** CPFs like '111.111.111-11' are considered invalid regardless of the calculations.
-* **Verifier Digit Calculation:** The calculations follow the standard algorithm used by the Federal Revenue.
+```bash
+{
+  "cpf": "12345678909",
+  "isValid": false
+}
+```
 
-## License
+## Contribuindo 🔥
 
-This script is provided "as is", without any warranties of any kind. Use it at your own risk.
-
-Feel free to adjust or add any additional information as needed!
+Contribuindo
+Contribuições são bem-vindas! Por favor, envie um pull request ou abra uma issue para discutir mudanças que gostaria de fazer.
