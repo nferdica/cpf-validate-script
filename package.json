@@ -1,0 +1,17 @@
+{
+  "name": "cpf-validate-script",
+  "version": "1.0.0",
+  "description": "This repository contains two JavaScript implementations for validating Brazilian CPF (Cadastro de Pessoas Físicas) numbers. The CPF is used to identify individuals in Brazil, and validating it ensures that the number is correct according to established rules.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
